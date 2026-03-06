@@ -1,0 +1,173 @@
+.advanced-filter {
+  background: var(--cream);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 20px;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--tea);
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+}
+
+.btn-limpiar {
+  padding: 6px 12px;
+  background: var(--tea);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--forest);
+  transition: all 0.2s ease;
+}
+
+.btn-limpiar:hover {
+  background: var(--mint);
+  color: var(--forest);
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Filtro de Precio */
+.price-inputs {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.input-group input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(136, 151, 108, 0.1);
+}
+
+.separator {
+  color: #ddd;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+/* Checkbox */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.checkbox-label:hover {
+  color: var(--sage);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--sage);
+}
+
+/* Tags Filter */
+.tags-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-btn {
+  padding: 8px 14px;
+  background: var(--tea);
+  border: 1px solid var(--mint);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--forest);
+  transition: all 0.2s ease;
+}
+
+.tag-btn:hover {
+  border-color: var(--sage);
+  color: var(--sage);
+  background: var(--cream);
+}
+
+.tag-btn.active {
+  background: var(--sage);
+  color: white;
+  border-color: var(--forest);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .advanced-filter {
+    position: relative;
+    top: auto;
+  }
+
+  .filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .btn-limpiar {
+    align-self: flex-start;
+  }
+
+  .price-inputs {
+    gap: 6px;
+  }
+
+  .tag-btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}

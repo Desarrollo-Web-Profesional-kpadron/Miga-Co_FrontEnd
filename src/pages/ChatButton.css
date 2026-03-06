@@ -1,0 +1,109 @@
+/* ChatButton.css */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+  --forest: #728156;
+  --sage:   #88976C;
+  --mint:   #B6C99C;
+  --tea:    #CFE1BB;
+  --cream:  #E8F4DC;
+}
+
+.chat-btn {
+  position: fixed;
+  bottom: 36px;
+  right: 36px;
+  z-index: 999; /* Asegura que esté por encima del Hero */
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--forest);
+  color: var(--cream);
+  border: none;
+  border-radius: 56px;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow:
+    0 4px 18px rgba(114,129,86,0.35),
+    0 1px 4px rgba(0,0,0,0.12);
+  transition: all 0.35s ease;
+  animation: pulse 2.8s ease-in-out infinite;
+  outline: none;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.chat-btn__icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.35rem;
+  transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+
+.chat-btn__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 0;
+  opacity: 0;
+  padding-right: 0;
+  transition: max-width 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s ease, padding 0.4s ease;
+  pointer-events: none;
+}
+
+.chat-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,244,220,0.5), transparent);
+}
+
+.chat-btn:hover {
+  background: var(--sage);
+  box-shadow: 0 8px 28px rgba(114,129,86,0.45);
+  animation: none;
+}
+
+.chat-btn:hover .chat-btn__icon { transform: rotate(-12deg) scale(1.1); }
+
+.chat-btn:hover .chat-btn__label {
+  max-width: 160px;
+  opacity: 1;
+  padding-right: 22px;
+}
+
+.chat-btn.is-open {
+  background: var(--mint);
+  animation: none;
+}
+
+.chat-btn.is-open .chat-btn__icon {
+  transform: rotate(45deg);
+  color: var(--forest);
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 4px 18px rgba(114,129,86,0.35), 0 0 0 0    rgba(114,129,86,0.55); }
+  60%  { box-shadow: 0 4px 18px rgba(114,129,86,0.35), 0 0 0 14px rgba(114,129,86,0);   }
+  100% { box-shadow: 0 4px 18px rgba(114,129,86,0.35), 0 0 0 0    rgba(114,129,86,0);   }
+}
+
+.demo-label {
+  position: fixed;
+  bottom: 100px;
+  right: 36px;
+  z-index: 998;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage);
+  opacity: 0.7;
+  font-family: 'Cormorant Garamond', serif;
+}

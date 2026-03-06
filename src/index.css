@@ -1,0 +1,23 @@
+
+/* index.css o App.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+:root {
+  --forest: #728156;
+  --sage: #88976C;
+  --mint: #B6C99C;
+  --tea: #CFE1BB;
+  --cream: #E8F4DC;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--cream);
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--forest);
+}
