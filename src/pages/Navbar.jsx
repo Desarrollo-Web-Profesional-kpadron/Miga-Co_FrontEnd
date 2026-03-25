@@ -11,11 +11,14 @@ export default function Navbar() {
   return (
     <div className="nav-container">
       <nav className="nav">
-        <Link to="/" className="nav-logo">
+        <Link to="/" className="nav-logo" onClick={closeMenu}>
           Miga<span>-Co</span>
         </Link>
 
         <ul className="nav-links">
+          <li>
+            <Link to="/">Inicio</Link>
+          </li>
           <li>
             <Link to="/productos">Productos</Link>
           </li>
@@ -24,6 +27,9 @@ export default function Navbar() {
           </li>
           <li>
             <a href="#creaciones">Creaciones</a>
+          </li>
+          <li className="login-item">
+            <Link to="/login" className="login-link">Iniciar Sesión</Link>
           </li>
         </ul>
 
@@ -35,6 +41,9 @@ export default function Navbar() {
       {/* Menú Móvil */}
       <ul className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         <li onClick={closeMenu}>
+          <Link to="/">Inicio</Link>
+        </li>
+        <li onClick={closeMenu}>
           <Link to="/productos">Productos</Link>
         </li>
         <li onClick={closeMenu}>
@@ -42,6 +51,9 @@ export default function Navbar() {
         </li>
         <li onClick={closeMenu}>
           <a href="#creaciones">Creaciones</a>
+        </li>
+        <li onClick={closeMenu} className="mobile-login-item">
+          <Link to="/login" className="mobile-login-link">Iniciar Sesión</Link>
         </li>
       </ul>
     </div>
