@@ -4,6 +4,11 @@ import { useState } from "react";
 export default function ProductCard({ product, onSelectProduct }) {
   const [imageError, setImageError] = useState(false);
 
+  const esPersonalizable =
+    product.personalizable?.permite_mensaje ||
+    product.personalizable?.rellenos_disponibles?.length > 0 ||
+    product.personalizable?.coberturas_disponibles?.length > 0;
+
   const primeraFoto =
     product.multimedia?.fotos_exterior?.[0] ||
     "https://via.placeholder.com/300?text=Sin+imagen";
@@ -24,7 +29,7 @@ export default function ProductCard({ product, onSelectProduct }) {
           onError={() => setImageError(true)}
         />
         {!disponible && <div className="badge-agotado">Agotado</div>}
-        {product.personalizable?.permite_mensaje && (
+        {esPersonalizable && (
           <div className="badge-personalizable">Personalizable</div>
         )}
       </div>
