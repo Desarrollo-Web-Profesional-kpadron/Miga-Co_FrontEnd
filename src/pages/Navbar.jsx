@@ -23,10 +23,10 @@ export default function Navbar() {
             <Link to="/productos">Productos</Link>
           </li>
           <li>
-            <a href="#sucursales">Sucursales</a>
+            <a href="#perfil">Perfil</a>
           </li>
           <li>
-            <a href="#creaciones">Creaciones</a>
+            <a href="#carrito">Carrito</a>
           </li>
           <li className="login-item">
             <Link to="/login" className="login-link">Iniciar Sesión</Link>
