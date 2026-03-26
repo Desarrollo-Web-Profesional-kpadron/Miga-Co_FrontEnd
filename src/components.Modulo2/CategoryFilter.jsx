@@ -1,12 +1,13 @@
-import './CategoryFilter.css';
+import "./CategoryFilter.css";
 
 const CATEGORIAS = [
-  { id: 'todos', label: 'Todos', emoji: '🍰' },
-  { id: 'Pasteles', label: 'Pasteles', emoji: '🎂' },
-  { id: 'Repostería y Galletas', label: 'Repostería', emoji: '🍪' },
-  { id: 'Panadería', label: 'Panadería', emoji: '🥐' },
-  { id: 'Gelatinas', label: 'Gelatinas', emoji: '🧁' },
-  { id: 'Materias Primas', label: 'Materias Primas', emoji: '🥫' }
+  { id: "todos", label: "Todos", emoji: "🍰" },
+  { id: "Pasteles", label: "Pasteles", emoji: "🎂" },
+  { id: "Repostería y Galletas", label: "Repostería", emoji: "🍪" },
+  { id: "Reposteria Saludable", label: "Reposteria Saludable", emoji: "🌿" },
+  { id: "Panadería", label: "Panadería", emoji: "🥐" },
+  { id: "Gelatinas", label: "Gelatinas", emoji: "🧁" },
+  { id: "Materias Primas", label: "Materias Primas", emoji: "🥫" },
 ];
 
 export default function CategoryFilter({ categoriaActiva, onCategoriaChange }) {
@@ -17,7 +18,7 @@ export default function CategoryFilter({ categoriaActiva, onCategoriaChange }) {
         {CATEGORIAS.map((cat) => (
           <button
             key={cat.id}
-            className={`category-btn ${categoriaActiva === cat.id ? 'active' : ''}`}
+            className={`category-btn ${categoriaActiva === cat.id ? "active" : ""}`}
             onClick={() => onCategoriaChange(cat.id)}
           >
             <span className="category-emoji">{cat.emoji}</span>

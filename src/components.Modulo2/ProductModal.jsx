@@ -1,11 +1,18 @@
 import { useState } from "react";
 import "./ProductModal.css";
+import PersonalizarModal from "./PersonalizarModal";
 
 export default function ProductModal({ product, onClose }) {
   if (!product) return null;
 
   // Estado para controlar la imagen actual en el carrusel
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showPersonalizar, setShowPersonalizar] = useState(false);
+
+  const esPersonalizable =
+    product.personalizable?.permite_mensaje ||
+    product.personalizable?.rellenos_disponibles?.length > 0 ||
+    product.personalizable?.coberturas_disponibles?.length > 0;
 
   const imagenes = product.multimedia?.fotos_exterior || [
     "https://via.placeholder.com/400?text=Sin+imagen",
@@ -51,164 +58,185 @@ export default function ProductModal({ product, onClose }) {
     console.log(
       "[ProductModal] ficha_sensorial:",
       JSON.stringify(product.ficha_sensorial),
-      JSON.stringify({ dulzor, textura, intensidad })
+      JSON.stringify({ dulzor, textura, intensidad }),
     );
   } catch (e) {
-    console.log("[ProductModal] ficha_sensorial (fallback):", product.ficha_sensorial, { dulzor, textura, intensidad });
+    console.log(
+      "[ProductModal] ficha_sensorial (fallback):",
+      product.ficha_sensorial,
+      { dulzor, textura, intensidad },
+    );
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
-          ✕
-        </button>
+    <>
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <button className="modal-close" onClick={onClose}>
+            ✕
+          </button>
 
-        <div className="modal-header">
-          <div className="carousel-container">
-            <img
-              src={imagenes[currentImageIndex]}
-              alt={`${product.nombre} - imagen ${currentImageIndex + 1}`}
-              className="modal-image"
-            />
+          <div className="modal-header">
+            <div className="carousel-container">
+              <img
+                src={imagenes[currentImageIndex]}
+                alt={`${product.nombre} - imagen ${currentImageIndex + 1}`}
+                className="modal-image"
+              />
 
-            {/* Botones de navegación */}
-            {imagenes.length > 1 && (
-              <>
-                <button
-                  className="carousel-btn carousel-prev"
-                  onClick={handlePrevImage}
-                >
-                  ‹
-                </button>
-                <button
-                  className="carousel-btn carousel-next"
-                  onClick={handleNextImage}
-                >
-                  ›
-                </button>
+              {/* Botones de navegación */}
+              {imagenes.length > 1 && (
+                <>
+                  <button
+                    className="carousel-btn carousel-prev"
+                    onClick={handlePrevImage}
+                  >
+                    ‹
+                  </button>
+                  <button
+                    className="carousel-btn carousel-next"
+                    onClick={handleNextImage}
+                  >
+                    ›
+                  </button>
 
-                {/* Puntos indicadores */}
-                <div className="carousel-dots">
-                  {imagenes.map((_, index) => (
-                    <button
-                      key={index}
-                      className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                      onClick={() => handleGoToImage(index)}
-                      aria-label={`Ir a imagen ${index + 1}`}
+                  {/* Puntos indicadores */}
+                  <div className="carousel-dots">
+                    {imagenes.map((_, index) => (
+                      <button
+                        key={index}
+                        className={`dot ${index === currentImageIndex ? "active" : ""}`}
+                        onClick={() => handleGoToImage(index)}
+                        aria-label={`Ir a imagen ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="modal-info">
+              <h2>{product.nombre}</h2>
+              <p className="modal-categoria">
+                {product.categoria} / {product.subcategoria}
+              </p>
+              <p className={`modal-stock ${disponible ? "in" : "out"}`}>
+                {disponible ? "En stock" : "Agotado"}
+              </p>
+              <p className="modal-precio">${product.precio.toLocaleString()}</p>
+            </div>
+          </div>
+
+          {/* Ficha sensorial */}
+          <section className="sensory-section">
+            <h3>Ficha técnica sensorial</h3>
+            <div className="bars">
+              <div className="bar-group">
+                <span>Dulzor</span>
+                <div className="bar">
+                  <div style={{ width: `${dulzor * 20}%` }} />
+                </div>
+                <div className="dot-row">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={i < dulzor ? "dot-filled" : "dot-empty"}
                     />
                   ))}
                 </div>
-              </>
+              </div>
+              <div className="bar-group">
+                <span>Textura</span>
+                <div className="bar">
+                  <div style={{ width: `${textura * 20}%` }} />
+                </div>
+                <div className="dot-row">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={i < textura ? "dot-filled" : "dot-empty"}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="bar-group">
+                <span>Intensidad</span>
+                <div className="bar">
+                  <div style={{ width: `${intensidad * 20}%` }} />
+                </div>
+                <div className="dot-row">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={i < intensidad ? "dot-filled" : "dot-empty"}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Ingredientes */}
+          <section className="ingredients-section">
+            <h3>Ingredientes</h3>
+            <ul>
+              {(product.ingredientes || []).map((ing, i) => (
+                <li key={i}>{ing}</li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Alérgenos */}
+          <section className="allergens-section">
+            <h3>Alérgenos</h3>
+            <p className="allergens">
+              {(product.ficha_sensorial?.alergenos || []).length > 0
+                ? (product.ficha_sensorial?.alergenos || []).join(", ")
+                : "Ninguno"}
+            </p>
+            {(product.ficha_sensorial?.alergenos || []).length > 0 && (
+              <p className="warning">⚠️ Contiene alérgenos</p>
             )}
+          </section>
+
+          {/* Información adicional */}
+          <section className="extra-info">
+            <h3>Información adicional</h3>
+            {product.porcion && (
+              <p>
+                <strong>Porción/presentación:</strong> {product.porcion}
+              </p>
+            )}
+            {product.conservacion && (
+              <p>
+                <strong>Conservación:</strong> {product.conservacion}
+              </p>
+            )}
+          </section>
+
+          <div className="modal-actions">
+            {esPersonalizable && (
+              <button
+                className="btn-personalizar-modal"
+                onClick={() => setShowPersonalizar(true)}
+              >
+                🎨 Personalizar
+              </button>
+            )}
+            <button className="btn-agregar">Agregar al carrito</button>
+            <button className="btn-cerrar" onClick={onClose}>
+              Cerrar
+            </button>
           </div>
-
-          <div className="modal-info">
-            <h2>{product.nombre}</h2>
-            <p className="modal-categoria">
-              {product.categoria} / {product.subcategoria}
-            </p>
-            <p className={`modal-stock ${disponible ? "in" : "out"}`}>
-              {disponible ? "En stock" : "Agotado"}
-            </p>
-            <p className="modal-precio">${product.precio.toLocaleString()}</p>
-          </div>
-        </div>
-
-        {/* Ficha sensorial */}
-        <section className="sensory-section">
-          <h3>Ficha técnica sensorial</h3>
-          <div className="bars">
-            <div className="bar-group">
-              <span>Dulzor</span>
-              <div className="bar">
-                <div style={{ width: `${dulzor * 20}%` }} />
-              </div>
-              <div className="dot-row">
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    className={i < dulzor ? "dot-filled" : "dot-empty"}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="bar-group">
-              <span>Textura</span>
-              <div className="bar">
-                <div style={{ width: `${textura * 20}%` }} />
-              </div>
-              <div className="dot-row">
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    className={i < textura ? "dot-filled" : "dot-empty"}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="bar-group">
-              <span>Intensidad</span>
-              <div className="bar">
-                <div style={{ width: `${intensidad * 20}%` }} />
-              </div>
-              <div className="dot-row">
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    className={i < intensidad ? "dot-filled" : "dot-empty"}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Ingredientes */}
-        <section className="ingredients-section">
-          <h3>Ingredientes</h3>
-          <ul>
-            {(product.ingredientes || []).map((ing, i) => (
-              <li key={i}>{ing}</li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Alérgenos */}
-        <section className="allergens-section">
-          <h3>Alérgenos</h3>
-          <p className="allergens">
-            {(product.ficha_sensorial?.alergenos || []).length > 0
-              ? (product.ficha_sensorial?.alergenos || []).join(", ")
-              : "Ninguno"}
-          </p>
-          {(product.ficha_sensorial?.alergenos || []).length > 0 && (
-            <p className="warning">⚠️ Contiene alérgenos</p>
-          )}
-        </section>
-
-        {/* Información adicional */}
-        <section className="extra-info">
-          <h3>Información adicional</h3>
-          {product.porcion && (
-            <p>
-              <strong>Porción/presentación:</strong> {product.porcion}
-            </p>
-          )}
-          {product.conservacion && (
-            <p>
-              <strong>Conservación:</strong> {product.conservacion}
-            </p>
-          )}
-        </section>
-
-        <div className="modal-actions">
-          <button className="btn-agregar">Agregar al carrito</button>
-          <button className="btn-cerrar" onClick={onClose}>
-            Cerrar
-          </button>
         </div>
       </div>
-    </div>
+
+      {showPersonalizar && (
+        <PersonalizarModal
+          product={product}
+          onClose={() => setShowPersonalizar(false)}
+        />
+      )}
+    </>
   );
 }

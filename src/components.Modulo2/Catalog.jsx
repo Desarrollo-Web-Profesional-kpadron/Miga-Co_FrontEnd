@@ -14,6 +14,7 @@ export default function Catalog() {
   const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [filtrosActivos, setFiltrosActivos] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
   // Actualizar productos filtrados cuando cambien los datos o filtros
   useEffect(() => {
@@ -89,19 +90,35 @@ export default function Catalog() {
 
       {/* Buscador */}
       <section className="catalog-search">
-        <SearchBar onSearch={handleBusqueda} productos={productos} />
-      </section>
+        <div className="catalog-search-row">
+          <SearchBar onSearch={handleBusqueda} productos={productos} />
+          <button
+            className={`btn-toggle-filtros ${mostrarFiltros ? "active" : ""}`}
+            onClick={() => setMostrarFiltros((prev) => !prev)}
+            aria-expanded={mostrarFiltros}
+            aria-label="Mostrar filtros avanzados"
+          >
+            <span className="filter-icon" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span>Filtros avanzados</span>
+          </button>
+        </div>
 
-      {/* Filtros y Productos */}
-      <div className="catalog-main">
-        {/* Sidebar con filtros */}
-        <aside className="catalog-sidebar">
+        <div
+          className={`catalog-advanced-panel ${mostrarFiltros ? "open" : ""}`}
+        >
           <AdvancedFilter
             onFiltersChange={handleFiltrosChange}
             productos={productos}
           />
-        </aside>
+        </div>
+      </section>
 
+      {/* Productos */}
+      <div className="catalog-main">
         {/* Contenido principal */}
         <main className="catalog-content">
           {/* Categorías */}

@@ -4,6 +4,7 @@ const CATEGORIAS = [
   { id: "todos", nombre: "Todos", icon: "🎂" },
   { id: "Pasteles", nombre: "Pasteles", icon: "🍰" },
   { id: "Repostería y Galletas", nombre: "Repostería", icon: "🍪" },
+  { id: "Reposteria Saludable", nombre: "Reposteria Saludable", icon: "🌿" },
   { id: "Panadería", nombre: "Panadería", icon: "🥐" },
   { id: "Gelatinas", nombre: "Gelatinas", icon: "✨" },
   { id: "Materias Primas", nombre: "Materias Primas", icon: "🥄" },

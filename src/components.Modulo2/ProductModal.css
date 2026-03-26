@@ -153,19 +153,19 @@
 }
 
 .modal-info h2 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.75rem 0;
   font-size: 1.5rem;
 }
 
 .modal-categoria {
   color: var(--sage);
   font-size: 0.9rem;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 1rem 0;
 }
 
 .modal-stock {
   font-weight: 600;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
 }
 
 .modal-stock.in {
@@ -180,14 +180,17 @@
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--forest);
-  margin-top: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .sensory-section,
 .ingredients-section,
 .allergens-section,
 .extra-info {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .sensory-section h3,
@@ -195,7 +198,7 @@
 .allergens-section h3,
 .extra-info h3 {
   font-size: 1.1rem;
-  margin: 0 0 1rem 0;
+  margin: 0 0 1.25rem 0;
   color: #333;
 }
 
@@ -295,10 +298,12 @@
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid #eee;
+  flex-wrap: wrap;
 }
 
 .btn-agregar,
-.btn-cerrar {
+.btn-cerrar,
+.btn-personalizar-modal {
   flex: 1;
   padding: 10px 20px;
   border: none;
@@ -306,6 +311,19 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  font-family: inherit;
+}
+
+.btn-personalizar-modal {
+  background: var(--cream);
+  color: var(--forest);
+  border: 2px solid var(--sage);
+}
+
+.btn-personalizar-modal:hover {
+  background: var(--sage);
+  color: white;
+  transform: translateY(-2px);
 }
 
 .btn-agregar {

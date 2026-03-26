@@ -1,0 +1,246 @@
+.pers-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 16px;
+  animation: persOverlayIn 0.2s ease;
+}
+
+@keyframes persOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pers-card {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: persCardIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes persCardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pers-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--tea);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--forest);
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pers-close:hover {
+  background: var(--mint);
+}
+
+/* Header */
+.pers-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--tea);
+}
+
+.pers-icon {
+  font-size: 2.2rem;
+}
+
+.pers-title {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+
+.pers-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--sage);
+}
+
+/* Sections */
+.pers-section {
+  margin-bottom: 20px;
+}
+
+.pers-section-title {
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Chips */
+.pers-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pers-chip {
+  padding: 8px 16px;
+  background: var(--tea);
+  border: 2px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--forest);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.pers-chip:hover {
+  border-color: var(--sage);
+  background: var(--cream);
+}
+
+.pers-chip.active {
+  background: var(--sage);
+  color: white;
+  border-color: var(--forest);
+  font-weight: 600;
+}
+
+/* Textarea */
+.pers-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  color: var(--forest);
+}
+
+.pers-textarea:focus {
+  outline: none;
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(136, 151, 108, 0.15);
+}
+
+.pers-char-count {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+/* Resumen */
+.pers-resumen {
+  background: var(--cream);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  min-height: 20px;
+}
+
+.pers-resumen p {
+  margin: 4px 0;
+  font-size: 0.875rem;
+  color: var(--forest);
+}
+
+.pers-error {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #ffe9e9;
+  color: #b42318;
+  font-weight: 600;
+}
+
+.pers-resumen:empty {
+  display: none;
+}
+
+/* Actions */
+.pers-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pers-btn-cancelar {
+  flex: 1;
+  padding: 12px;
+  background: var(--tea);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--forest);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s ease;
+}
+
+.pers-btn-cancelar:hover {
+  background: var(--mint);
+}
+
+.pers-btn-confirmar {
+  flex: 2;
+  padding: 12px;
+  background: var(--sage);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s ease;
+}
+
+.pers-btn-confirmar:hover {
+  background: var(--forest);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .pers-card {
+    padding: 20px;
+  }
+
+  .pers-actions {
+    flex-direction: column;
+  }
+}
