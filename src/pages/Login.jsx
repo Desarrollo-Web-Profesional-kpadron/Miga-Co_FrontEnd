@@ -1,23 +1,24 @@
 import { useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import api from "../Api/axios.js"; 
-//import api from '../api/axios.js'
+import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
 export default function LoginMigaCo() {
   const navigate = useNavigate();
+  const { login, register, isLoading: authLoading } = useAuth();
   
   // Estados de la UI
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false); // Estado para el modal de éxito
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Estado del Formulario
   const [formData, setFormData] = useState({
-    name: "", // Este se mapeará a 'nombre' en el envío
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -29,53 +30,54 @@ export default function LoginMigaCo() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-    setShowSuccess(false);
+  e.preventDefault();
+  setIsLoading(true);
+  setError("");
+  setShowSuccess(false);
 
-    try {
-      if (isLogin) {
-        // --- INICIO DE SESIÓN ---
-        const response = await api.post("/auth/login", {
-          email: formData.email,
-          password: formData.password,
-        });
-
-        const { token } = response.data;
-        localStorage.setItem("token", token);
-        navigate("/");
-        
+  try {
+    if (isLogin) {
+      // --- INICIO DE SESIÓN ---
+      const result = await login(formData.email, formData.password);
+      
+      if (result.success) {
+        // Pequeño retraso para asegurar que el estado se actualice
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 100);
       } else {
-        // --- REGISTRO ---
-        // Validación manual de contraseñas antes de enviar
-        if (formData.password !== formData.confirmPassword) {
-          throw new Error("Las contraseñas no coinciden");
-        }
+        setError(result.error || "Error al iniciar sesión");
+      }
+      
+    } else {
+      // --- REGISTRO ---
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error("Las contraseñas no coinciden");
+      }
 
-        await api.post("/auth/registro", {
-          nombre: formData.name, // Mapeo de 'name' a 'nombre' para el Backend
-          email: formData.email,
-          password: formData.password,
-        });
+      const result = await register({
+        nombre: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
 
-        // Mostrar éxito y limpiar campos sensibles
+      if (result.success) {
         setShowSuccess(true);
-        setFormData({ ...formData, password: "", confirmPassword: "" });
-
-        // Esperar un momento y cambiar a la pestaña de Login
         setTimeout(() => {
           setShowSuccess(false);
-          setIsLogin(true);
-        }, 3500);
+          navigate("/perfil", { replace: true });
+        }, 2000);
+      } else {
+        setError(result.error || "Error al registrar usuario");
       }
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || err.message || "Error de conexión");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setError(err.message || "Error de conexión");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="mc-root">
@@ -115,11 +117,28 @@ export default function LoginMigaCo() {
           transition={{ duration: 0.8 }}
         >
           <div className="mc-tabs">
-            <button className={`mc-tab ${isLogin ? "active" : ""}`} onClick={() => {setIsLogin(true); setError(""); setShowSuccess(false);}}>Iniciar sesión</button>
-            <button className={`mc-tab ${!isLogin ? "active" : ""}`} onClick={() => {setIsLogin(false); setError("");}}>Registrarse</button>
+            <button 
+              className={`mc-tab ${isLogin ? "active" : ""}`} 
+              onClick={() => {
+                setIsLogin(true);
+                setError("");
+                setShowSuccess(false);
+              }}
+            >
+              Iniciar sesión
+            </button>
+            <button 
+              className={`mc-tab ${!isLogin ? "active" : ""}`} 
+              onClick={() => {
+                setIsLogin(false);
+                setError("");
+              }}
+            >
+              Registrarse
+            </button>
           </div>
 
-          {/* Notificación de Éxito Custom */}
+          {/* Notificación de Éxito */}
           <AnimatePresence>
             {showSuccess && (
               <motion.div 
@@ -131,7 +150,7 @@ export default function LoginMigaCo() {
                 <span className="mc-success-icon">✦</span>
                 <div className="mc-success-content">
                   <strong>¡Registro completado!</strong>
-                  <p>Bienvenido a la familia. Ya puedes iniciar sesión.</p>
+                  <p>Bienvenido a la familia. Redirigiendo...</p>
                 </div>
               </motion.div>
             )}
@@ -150,7 +169,7 @@ export default function LoginMigaCo() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Errores del Backend */}
+          {/* Errores */}
           {error && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mc-error-msg">
               {error}
@@ -162,12 +181,26 @@ export default function LoginMigaCo() {
               {!isLogin && (
                 <div className="mc-field">
                   <label>Nombre completo</label>
-                  <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Tu nombre" />
+                  <input 
+                    required 
+                    type="text" 
+                    name="name" 
+                    value={formData.name} 
+                    onChange={handleChange} 
+                    placeholder="Tu nombre" 
+                  />
                 </div>
               )}
               <div className="mc-field">
                 <label>Email</label>
-                <input required type="email" name="email" value={formData.email} onChange={handleChange} placeholder="tu@email.com" />
+                <input 
+                  required 
+                  type="email" 
+                  name="email" 
+                  value={formData.email} 
+                  onChange={handleChange} 
+                  placeholder="tu@email.com" 
+                />
               </div>
               <div className="mc-field">
                 <label>Contraseña</label>
@@ -180,7 +213,11 @@ export default function LoginMigaCo() {
                     onChange={handleChange} 
                     placeholder="••••••••" 
                   />
-                  <button type="button" className="mc-pw-toggle" onClick={() => setShowPassword(!showPassword)}>
+                  <button 
+                    type="button" 
+                    className="mc-pw-toggle" 
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
                     {showPassword ? "Ocultar" : "Mostrar"}
                   </button>
                 </div>
@@ -203,11 +240,17 @@ export default function LoginMigaCo() {
             <motion.button 
               type="submit" 
               className="mc-submit" 
-              disabled={isLoading}
+              disabled={isLoading || authLoading}
               whileHover={{ scale: 1.01 }} 
               whileTap={{ scale: 0.98 }}
             >
-              {isLoading ? <span className="mc-loader"></span> : isLogin ? "Iniciar sesión" : "Crear cuenta"}
+              {isLoading || authLoading ? (
+                <span className="mc-loader"></span>
+              ) : isLogin ? (
+                "Iniciar sesión"
+              ) : (
+                "Crear cuenta"
+              )}
             </motion.button>
           </form>
 

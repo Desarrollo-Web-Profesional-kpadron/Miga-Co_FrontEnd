@@ -164,3 +164,35 @@
   }
 }
 
+/* Botón de cerrar sesión */
+.logout-item {
+  margin-left: 1rem;
+}
+
+.logout-btn {
+  background: #b65c5c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logout-btn:hover {
+  background: #9a4a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(182, 92, 92, 0.3);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}

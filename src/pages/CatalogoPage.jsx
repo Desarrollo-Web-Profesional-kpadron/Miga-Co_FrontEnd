@@ -5,7 +5,7 @@ import ChatButton from "../pages/ChatButton";
 export default function CatalogoPage() {
   return (
     <>
-      <Navbar />
+      
       <main>
         <Catalog />
       </main>
