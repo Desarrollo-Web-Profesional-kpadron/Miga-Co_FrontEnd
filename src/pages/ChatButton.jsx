@@ -21,7 +21,6 @@ export default function ChatButton() {
       .catch(() => setProductos([]));
   }, []);
 
-  <span className="chat-btn__icon">{open ? "✕" : "✦"}</span>
   const buildSystemPrompt = () => {
     const inventario = productos.length > 0
       ? productos.map(p =>

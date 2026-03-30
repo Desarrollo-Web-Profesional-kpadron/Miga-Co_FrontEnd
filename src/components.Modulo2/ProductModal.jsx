@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./ProductModal.css";
 import PersonalizarModal from "./PersonalizarModal";
+import Resenas from "../components/Resenas";
 
 export default function ProductModal({ product, onClose }) {
   if (!product) return null;
@@ -213,6 +214,9 @@ export default function ProductModal({ product, onClose }) {
               </p>
             )}
           </section>
+
+          {/* Reseñas */}
+          <Resenas productoId={product._id} />
 
           <div className="modal-actions">
             {esPersonalizable && (

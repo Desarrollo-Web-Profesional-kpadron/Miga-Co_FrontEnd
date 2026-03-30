@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../Api/axios";
 import "./ProductDetail.css";
+import Resenas from "../components/Resenas";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -101,18 +102,21 @@ export default function ProductDetail() {
 
       {/* Información adicional */}
       <section className="extra-info">
-        <h3>Información adicional</h3>
+        <h3>Informacion adicional</h3>
         {prod.porcion && (
           <p>
-            <strong>Porción:</strong> {prod.porcion}
+            <strong>Porcion:</strong> {prod.porcion}
           </p>
         )}
         {prod.conservacion && (
           <p>
-            <strong>Conservación:</strong> {prod.conservacion}
+            <strong>Conservacion:</strong> {prod.conservacion}
           </p>
         )}
       </section>
+
+      {/* Reseñas */}
+      <Resenas productoId={id} />
     </div>
   );
 }
