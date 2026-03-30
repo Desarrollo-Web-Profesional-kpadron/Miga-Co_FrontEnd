@@ -16,7 +16,7 @@ export default function Hero() {
 
       {/* Contenido Izquierda */}
       <div className="hero-left">
-        <p className="hero-eyebrow fade-in">Pastelería artesanal</p>
+        <p className="hero-eyebrow fade-in">Reposteria Miga-Co</p>
 
         <h1 className="hero-title fade-in-delay">
           Aquí,<br />
@@ -30,7 +30,7 @@ export default function Hero() {
           de todas tus celebraciones.
         </p>
 
-        <a href="#" className="hero-cta fade-in-delay2">
+        <a href="/productos" className="hero-cta fade-in-delay2">
           Explorar pasteles →
         </a>
       </div>

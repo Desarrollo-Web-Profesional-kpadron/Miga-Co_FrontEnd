@@ -5,7 +5,7 @@ import ChatButton from "../pages/ChatButton";
 export default function Home() {
   return (
     <>
-      <Navbar />
+    
       <main>
         <Hero />
       </main>
