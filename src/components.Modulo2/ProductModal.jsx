@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./ProductModal.css";
 import PersonalizarModal from "./PersonalizarModal";
+import { useCarrito } from "../context/CarritoContext";
 
 export default function ProductModal({ product, onClose }) {
   if (!product) return null;
@@ -8,6 +9,10 @@ export default function ProductModal({ product, onClose }) {
   // Estado para controlar la imagen actual en el carrusel
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPersonalizar, setShowPersonalizar] = useState(false);
+  const [agregando, setAgregando] = useState(false);
+  const [feedbackAgregar, setFeedbackAgregar] = useState("");
+
+  const { agregarItem } = useCarrito();
 
   const esPersonalizable =
     product.personalizable?.permite_mensaje ||
@@ -223,7 +228,31 @@ export default function ProductModal({ product, onClose }) {
                 🎨 Personalizar
               </button>
             )}
-            <button className="btn-agregar">Agregar al carrito</button>
+            {feedbackAgregar && (
+              <p className={`feedback-agregar ${feedbackAgregar.startsWith("✅") ? "ok" : "error"}`}>
+                {feedbackAgregar}
+              </p>
+            )}
+            <button
+              className="btn-agregar"
+              disabled={!disponible || agregando}
+              onClick={async () => {
+                setAgregando(true);
+                setFeedbackAgregar("");
+                const persId = localStorage.getItem("miga_ultima_personalizacion_id") || null;
+                const resultado = await agregarItem(product._id, 1, persId);
+                if (resultado.success) {
+                  localStorage.removeItem("miga_ultima_personalizacion_id");
+                  setFeedbackAgregar("✅ ¡Agregado al carrito!");
+                  setTimeout(() => { setFeedbackAgregar(""); onClose(); }, 1200);
+                } else {
+                  setFeedbackAgregar(`❌ ${resultado.error}`);
+                }
+                setAgregando(false);
+              }}
+            >
+              {agregando ? "Agregando..." : "Agregar al carrito"}
+            </button>
             <button className="btn-cerrar" onClick={onClose}>
               Cerrar
             </button>

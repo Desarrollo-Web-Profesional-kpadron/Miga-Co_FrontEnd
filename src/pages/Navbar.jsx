@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCarrito } from "../context/CarritoContext";
 import "./Navbar.css";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, isAdmin, logout, loading } = useAuth();
+  const { totalItems } = useCarrito();
   const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -53,7 +55,12 @@ export default function Navbar() {
     if (isAuthenticated && !isAdmin) {
       links.push(
         <li key="cart">
-          <Link to="/carrito">Carrito</Link>
+          <Link to="/carrito" className="nav-carrito-link">
+            Carrito
+            {totalItems > 0 && (
+              <span className="carrito-badge">{totalItems}</span>
+            )}
+          </Link>
         </li>
       );
       links.push(
@@ -115,7 +122,12 @@ export default function Navbar() {
     if (isAuthenticated && !isAdmin) {
       links.push(
         <li key="mobile-cart" onClick={closeMenu}>
-          <Link to="/carrito">Carrito</Link>
+          <Link to="/carrito" className="nav-carrito-link">
+            Carrito
+            {totalItems > 0 && (
+              <span className="carrito-badge">{totalItems}</span>
+            )}
+          </Link>
         </li>
       );
       links.push(

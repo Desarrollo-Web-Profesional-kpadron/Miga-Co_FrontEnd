@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { CarritoProvider } from "./context/CarritoContext";
 import Navbar from "./pages/Navbar";
 import Home from "./pages/Home";
 import CatalogoPage from "./pages/CatalogoPage";
@@ -8,6 +9,7 @@ import Login from "./pages/Login";
 import PerfilMigaCo from "./pages/Perfil";
 import AdminProductos from "./pages/AdminProductos";
 import AdminPedidos from "./pages/AdminPedidos";
+import Carrito from "./pages/Carrito";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
@@ -36,13 +38,21 @@ function AppRoutes() {
       <Route path="/producto/:id" element={<ProductDetail />} />
       
       {/* Rutas de usuario normal */}
-      <Route 
-        path="/perfil" 
+      <Route
+        path="/carrito"
+        element={
+          <ProtectedRoute>
+            <Carrito />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/perfil"
         element={
           <ProtectedRoute>
             <PerfilMigaCo />
           </ProtectedRoute>
-        } 
+        }
       />
       
       {/* Rutas de administrador */}
@@ -69,10 +79,12 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Navbar />
-        <AppRoutes />
-      </Router>
+      <CarritoProvider>
+        <Router>
+          <Navbar />
+          <AppRoutes />
+        </Router>
+      </CarritoProvider>
     </AuthProvider>
   );
 }
