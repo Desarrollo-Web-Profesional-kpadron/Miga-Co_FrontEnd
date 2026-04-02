@@ -1,8 +1,16 @@
 import "./ProductCard.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCarrito } from "../context/CarritoContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProductCard({ product, onSelectProduct }) {
   const [imageError, setImageError] = useState(false);
+  const [agregando, setAgregando] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const { agregarItem } = useCarrito();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const esPersonalizable =
     product.personalizable?.permite_mensaje ||
@@ -54,8 +62,28 @@ export default function ProductCard({ product, onSelectProduct }) {
           <div className="product-precio">
             ${product.precio.toLocaleString()}
           </div>
-          <button className="btn-agregar" disabled={!disponible}>
-            {disponible ? "Agregar" : "Agotado"}
+          <button
+            className="btn-agregar"
+            disabled={!disponible || agregando}
+            onClick={async () => {
+              if (!isAuthenticated) {
+                navigate("/login");
+                return;
+              }
+              setAgregando(true);
+              setFeedback("");
+              const resultado = await agregarItem(product._id, 1);
+              if (resultado.success) {
+                setFeedback("✅");
+                setTimeout(() => setFeedback(""), 1500);
+              } else {
+                setFeedback("❌");
+                setTimeout(() => setFeedback(""), 2000);
+              }
+              setAgregando(false);
+            }}
+          >
+            {agregando ? "..." : feedback || (disponible ? "Agregar" : "Agotado")}
           </button>
         </div>
 
