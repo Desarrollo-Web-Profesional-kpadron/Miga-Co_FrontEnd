@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProductModal.css";
 import PersonalizarModal from "./PersonalizarModal";
 import { useCarrito } from "../context/CarritoContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProductModal({ product, onClose }) {
   if (!product) return null;
@@ -13,6 +15,8 @@ export default function ProductModal({ product, onClose }) {
   const [feedbackAgregar, setFeedbackAgregar] = useState("");
 
   const { agregarItem } = useCarrito();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const esPersonalizable =
     product.personalizable?.permite_mensaje ||
@@ -237,6 +241,11 @@ export default function ProductModal({ product, onClose }) {
               className="btn-agregar"
               disabled={!disponible || agregando}
               onClick={async () => {
+                if (!isAuthenticated) {
+                  onClose();
+                  navigate("/login");
+                  return;
+                }
                 setAgregando(true);
                 setFeedbackAgregar("");
                 const persId = localStorage.getItem("miga_ultima_personalizacion_id") || null;
