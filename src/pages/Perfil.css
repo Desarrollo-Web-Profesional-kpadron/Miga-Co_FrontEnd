@@ -868,3 +868,59 @@
   .pf-info-grid { grid-template-columns: 1fr; }
   .pf-toast { left: 1rem; right: 1rem; bottom: 1.2rem; }
 }
+
+/* ── DIRECCIÓN EN PEDIDO DEL PERFIL ── */
+.pf-pedido-direccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: var(--cream);
+  border-radius: 0.75rem;
+  border-left: 3px solid var(--sage);
+  position: relative;
+}
+
+.pf-pedido-dir-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.pf-pedido-dir-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding-left: 0.1rem;
+}
+
+.pf-pedido-dir-calle {
+  font-family: "Playfair Display", serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--forest);
+  line-height: 1.3;
+}
+
+.pf-pedido-dir-ciudad {
+  font-size: 0.82rem;
+  color: var(--sage);
+}
+
+.pf-pedido-dir-ref {
+  font-size: 0.75rem;
+  color: var(--mint);
+  font-style: italic;
+}
+
+.pf-pedido-dir-na {
+  font-size: 0.78rem;
+  color: var(--sage);
+  font-style: italic;
+  opacity: 0.65;
+}

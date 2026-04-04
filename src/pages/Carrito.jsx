@@ -4,15 +4,55 @@ import { useCarrito } from '../context/CarritoContext';
 import api from '../Api/axios';
 import './Carrito.css';
 
+// ── Métodos de pago simulados ──────────────────────────────────────────────
+const METODOS_PAGO = [
+  { id: 'tarjeta', label: 'Tarjeta de crédito / débito', icon: '💳' },
+  { id: 'paypal',  label: 'PayPal',                      icon: '🅿️' },
+  { id: 'oxxo',   label: 'OXXO Pay',                    icon: '🏪' },
+];
+
+const detectarBrand = (numero) => {
+  const n = numero.replace(/\s/g, '');
+  if (/^4/.test(n))          return 'Visa';
+  if (/^5[1-5]/.test(n))     return 'Mastercard';
+  if (/^3[47]/.test(n))      return 'Amex';
+  if (/^6(?:011|5)/.test(n)) return 'Discover';
+  return 'Tarjeta';
+};
+
+const formatNumero = (val) =>
+  val.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim();
+
+const formatFecha = (val) => {
+  const digits = val.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+};
+
 export default function Carrito() {
   const { carrito, loading, error, actualizarCantidad, eliminarItem, vaciarCarrito } = useCarrito();
-  const [validando, setValidando] = useState(false);
-  const [validacion, setValidacion] = useState(null);
+  const [validando, setValidando]         = useState(false);
+  const [validacion, setValidacion]       = useState(null);
   const [creandoPedido, setCreandoPedido] = useState(false);
   const [pedidoExitoso, setPedidoExitoso] = useState(null);
   const navigate = useNavigate();
 
-  const items = carrito?.items || [];
+  // ── Estados de pago ────────────────────────────────────────────────────
+  const [modalPago, setModalPago]         = useState(false);
+  const [metodoPago, setMetodoPago]       = useState('tarjeta');
+  const [guardandoPago, setGuardandoPago] = useState(false);
+  const [pasoModal, setPasoModal]         = useState('direccion'); // 'direccion' | 'metodo' | 'form' | 'procesando'
+
+  // ── Form tarjeta ───────────────────────────────────────────────────────
+  const [cardForm, setCardForm]     = useState({ numero: '', nombre: '', fecha: '', cvv: '' });
+  const [cardErrors, setCardErrors] = useState({});
+
+  // ── Dirección de envío ─────────────────────────────────────────────────
+  const [direccionEnvio, setDireccionEnvio]     = useState(null);
+  const [loadingDireccion, setLoadingDireccion] = useState(false);
+  // ───────────────────────────────────────────────────────────────────────
+
+  const items    = carrito?.items    || [];
   const subtotal = carrito?.subtotal || 0;
 
   const handleValidar = async () => {
@@ -28,7 +68,77 @@ export default function Carrito() {
     }
   };
 
-  const handleCrearPedido = async () => {
+  // ── Abrir modal: primero carga la dirección principal ──────────────────
+  const handleAbrirPago = async () => {
+    setCardForm({ numero: '', nombre: '', fecha: '', cvv: '' });
+    setCardErrors({});
+    setPasoModal('direccion');
+    setModalPago(true);
+
+    try {
+      setLoadingDireccion(true);
+      const res = await api.get('/usuarios/perfil');
+      const dirs = res.data?.perfil?.direcciones || [];
+      const principal = dirs.find(d => d.es_principal) || dirs[0] || null;
+      setDireccionEnvio(principal);
+    } catch (err) {
+      setDireccionEnvio(null);
+    } finally {
+      setLoadingDireccion(false);
+    }
+  };
+
+  const validarCard = () => {
+    const errs = {};
+    const num = cardForm.numero.replace(/\s/g, '');
+    if (num.length < 16) errs.numero = 'Número incompleto (16 dígitos)';
+    if (!cardForm.nombre.trim()) errs.nombre = 'Ingresa el nombre del titular';
+    const parts = cardForm.fecha.split('/');
+    const mm = parseInt(parts[0]), aa = parseInt(parts[1]);
+    const now = new Date();
+    const yy  = now.getFullYear() % 100;
+    if (!cardForm.fecha || parts.length !== 2 || mm < 1 || mm > 12)
+      errs.fecha = 'Fecha inválida (MM/AA)';
+    else if (aa < yy || (aa === yy && mm < now.getMonth() + 1))
+      errs.fecha = 'Tarjeta vencida';
+    if (cardForm.cvv.length < 3) errs.cvv = 'CVV incompleto';
+    setCardErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleProcesarPago = async (pagarAhora) => {
+    if (metodoPago === 'tarjeta' && !validarCard()) return;
+
+    try {
+      setGuardandoPago(true);
+      setPasoModal('procesando');
+
+      await new Promise(r => setTimeout(r, 2200));
+
+      const num   = cardForm.numero.replace(/\s/g, '');
+      const last4 = metodoPago === 'tarjeta' ? num.slice(-4) : null;
+      const brand = metodoPago === 'tarjeta' ? detectarBrand(num) : metodoPago;
+
+      await api.put('/usuarios/perfil', {
+        metodo_pago: {
+          tipo:           metodoPago === 'tarjeta' ? 'tarjeta' : 'paypal',
+          last4,
+          brand,
+          token_pasarela: `sim_${Date.now()}`,
+        }
+      });
+
+      await handleCrearPedido(pagarAhora);
+
+    } catch (err) {
+      setValidacion({ valido: false, error: err.response?.data?.message || 'Error al procesar el pago' });
+      setModalPago(false);
+    } finally {
+      setGuardandoPago(false);
+    }
+  };
+
+  const handleCrearPedido = async (pagarAhora = false) => {
     try {
       setCreandoPedido(true);
       const itemsParaPedido = items.map((item) => ({
@@ -45,11 +155,26 @@ export default function Carrito() {
 
       const res = await api.post('/pedidos', {
         items: itemsParaPedido,
-        logistica: { metodo_envio: 'domicilio' },
-        pago: { metodo: 'pendiente', estado: 'pendiente' },
+        logistica: {
+          metodo_envio: 'domicilio',
+          // enviar la dirección seleccionada si existe
+          ...(direccionEnvio && {
+            direccion_entrega: {
+              calle:          direccionEnvio.calle,
+              ciudad:         direccionEnvio.ciudad,
+              codigo_postal:  direccionEnvio.codigo_postal,
+              referencias:    direccionEnvio.referencias,
+            }
+          }),
+        },
+        pago: {
+          metodo: metodoPago,
+          estado: pagarAhora ? 'pagado' : 'pendiente',
+        },
       });
 
       await vaciarCarrito();
+      setModalPago(false);
       setPedidoExitoso(res.data);
     } catch (err) {
       setValidacion({ valido: false, error: err.response?.data?.message || 'Error al crear el pedido' });
@@ -57,6 +182,250 @@ export default function Carrito() {
       setCreandoPedido(false);
     }
   };
+
+  // ── MODAL ─────────────────────────────────────────────────────────────
+  const ModalPago = () => (
+    <div className="pago-overlay" onClick={() => !guardandoPago && setModalPago(false)}>
+      <div className="pago-modal" onClick={e => e.stopPropagation()}>
+
+        {/* ── Indicador de pasos ── */}
+        {pasoModal !== 'procesando' && (
+          <div className="pago-steps">
+            {['direccion', 'metodo', 'form'].map((step, i) => (
+              <div key={step} className="pago-step-row">
+                <div className={`pago-step-dot ${pasoModal === step ? 'active' : ['metodo','form'].indexOf(pasoModal) > ['metodo','form'].indexOf(step) || pasoModal === 'form' && step === 'metodo' || pasoModal === 'form' && step === 'direccion' || pasoModal === 'metodo' && step === 'direccion' ? 'done' : ''}`}>
+                  {(pasoModal === 'metodo' && step === 'direccion') || (pasoModal === 'form' && (step === 'direccion' || step === 'metodo')) ? '✓' : i + 1}
+                </div>
+                {i < 2 && <div className="pago-step-line" />}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── PASO 1: dirección ── */}
+        {pasoModal === 'direccion' && (
+          <>
+            <div className="pago-modal-head">
+              <h3 className="pago-modal-title">Dirección de <em>envío</em></h3>
+              <button className="pago-modal-close" onClick={() => setModalPago(false)}>✕</button>
+            </div>
+
+            {loadingDireccion ? (
+              <div className="pago-dir-loading">
+                <div className="pago-spinner-sm" />
+                <span>Cargando dirección...</span>
+              </div>
+            ) : direccionEnvio ? (
+              <div className="pago-dir-card">
+                <div className="pago-dir-icon">
+                  {direccionEnvio.etiqueta === 'Hogar' ? '🏠' : direccionEnvio.etiqueta === 'Trabajo' ? '💼' : '📍'}
+                </div>
+                <div className="pago-dir-info">
+                  <div className="pago-dir-badge">
+                    {direccionEnvio.etiqueta}
+                    {direccionEnvio.es_principal && <span className="pago-dir-principal">✦ Principal</span>}
+                  </div>
+                  <div className="pago-dir-calle">{direccionEnvio.calle}</div>
+                  <div className="pago-dir-ciudad">{direccionEnvio.ciudad}, CP {direccionEnvio.codigo_postal}</div>
+                  {direccionEnvio.referencias && (
+                    <div className="pago-dir-ref">📌 {direccionEnvio.referencias}</div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="pago-dir-empty">
+                <span>📭</span>
+                <p>No tienes una dirección guardada.</p>
+                <button className="pago-dir-link" onClick={() => navigate('/perfil')}>
+                  Agregar dirección en tu perfil →
+                </button>
+              </div>
+            )}
+
+            <div className="pago-resumen" style={{ marginTop: '1.25rem' }}>
+              <span>Total a pagar</span>
+              <strong>${subtotal.toLocaleString()}</strong>
+            </div>
+
+            <button
+              className="btn-pagar-ahora"
+              onClick={() => setPasoModal('metodo')}
+              disabled={!direccionEnvio || loadingDireccion}
+            >
+              Continuar →
+            </button>
+            {!direccionEnvio && !loadingDireccion && (
+              <p className="pago-nota">Agrega una dirección en tu perfil para continuar</p>
+            )}
+          </>
+        )}
+
+        {/* ── PASO 2: elegir método ── */}
+        {pasoModal === 'metodo' && (
+          <>
+            <div className="pago-modal-head">
+              <button className="pago-back-btn" onClick={() => setPasoModal('direccion')}>← Volver</button>
+              <h3 className="pago-modal-title">Método de <em>pago</em></h3>
+              <button className="pago-modal-close" onClick={() => setModalPago(false)}>✕</button>
+            </div>
+            <p className="pago-subtitle">Selecciona cómo deseas pagar</p>
+            <div className="pago-metodos">
+              {METODOS_PAGO.map(m => (
+                <label key={m.id} className={`pago-metodo-item ${metodoPago === m.id ? 'selected' : ''}`}>
+                  <input type="radio" name="metodo" value={m.id}
+                    checked={metodoPago === m.id}
+                    onChange={() => setMetodoPago(m.id)} />
+                  <span className="pago-metodo-icon">{m.icon}</span>
+                  <span className="pago-metodo-label">{m.label}</span>
+                  {metodoPago === m.id && <span className="pago-check">✦</span>}
+                </label>
+              ))}
+            </div>
+            <div className="pago-resumen">
+              <span>Total a pagar</span>
+              <strong>${subtotal.toLocaleString()}</strong>
+            </div>
+            <button className="btn-pagar-ahora" onClick={() => setPasoModal('form')}>
+              Continuar →
+            </button>
+          </>
+        )}
+
+        {/* ── PASO 3: formulario ── */}
+        {pasoModal === 'form' && (
+          <>
+            <div className="pago-modal-head">
+              <button className="pago-back-btn" onClick={() => setPasoModal('metodo')}>← Volver</button>
+              <button className="pago-modal-close" onClick={() => setModalPago(false)}>✕</button>
+            </div>
+
+            {metodoPago === 'tarjeta' && (
+              <>
+                <h3 className="pago-modal-title" style={{ marginBottom: '1.2rem' }}>
+                  Datos de <em>tarjeta</em>
+                </h3>
+                <div className="card-preview">
+                  <div className="card-chip">▬▬</div>
+                  <div className="card-brand-label">{detectarBrand(cardForm.numero)}</div>
+                  <div className="card-numero-preview">
+                    {cardForm.numero || '•••• •••• •••• ••••'}
+                  </div>
+                  <div className="card-bottom-row">
+                    <div>
+                      <div className="card-field-label">TITULAR</div>
+                      <div className="card-field-val">{cardForm.nombre || 'NOMBRE APELLIDO'}</div>
+                    </div>
+                    <div>
+                      <div className="card-field-label">VENCE</div>
+                      <div className="card-field-val">{cardForm.fecha || 'MM/AA'}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-fields">
+                  <div className="card-field-group full">
+                    <label>Número de tarjeta</label>
+                    <input
+                      className={cardErrors.numero ? 'field-error' : ''}
+                      placeholder="1234 5678 9012 3456"
+                      value={cardForm.numero}
+                      inputMode="numeric"
+                      onChange={e => setCardForm({ ...cardForm, numero: formatNumero(e.target.value) })}
+                    />
+                    {cardErrors.numero && <span className="field-err-msg">{cardErrors.numero}</span>}
+                  </div>
+                  <div className="card-field-group full">
+                    <label>Nombre del titular</label>
+                    <input
+                      className={cardErrors.nombre ? 'field-error' : ''}
+                      placeholder="Como aparece en la tarjeta"
+                      value={cardForm.nombre}
+                      onChange={e => setCardForm({ ...cardForm, nombre: e.target.value.toUpperCase() })}
+                    />
+                    {cardErrors.nombre && <span className="field-err-msg">{cardErrors.nombre}</span>}
+                  </div>
+                  <div className="card-field-group half">
+                    <label>Vencimiento</label>
+                    <input
+                      className={cardErrors.fecha ? 'field-error' : ''}
+                      placeholder="MM/AA"
+                      value={cardForm.fecha}
+                      inputMode="numeric"
+                      onChange={e => setCardForm({ ...cardForm, fecha: formatFecha(e.target.value) })}
+                    />
+                    {cardErrors.fecha && <span className="field-err-msg">{cardErrors.fecha}</span>}
+                  </div>
+                  <div className="card-field-group half">
+                    <label>CVV</label>
+                    <input
+                      className={cardErrors.cvv ? 'field-error' : ''}
+                      placeholder="•••"
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={4}
+                      value={cardForm.cvv}
+                      onChange={e => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                    />
+                    {cardErrors.cvv && <span className="field-err-msg">{cardErrors.cvv}</span>}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {metodoPago !== 'tarjeta' && (
+              <div className="pago-otro-info">
+                <div className="pago-otro-icon">
+                  {METODOS_PAGO.find(m => m.id === metodoPago)?.icon}
+                </div>
+                <h3 className="pago-modal-title" style={{ margin: '0.5rem 0' }}>
+                  {METODOS_PAGO.find(m => m.id === metodoPago)?.label}
+                </h3>
+                <p className="pago-subtitle">
+                  {metodoPago === 'paypal'
+                    ? 'Se simulará el pago con tu cuenta PayPal registrada.'
+                    : 'Se generará una referencia de pago para realizar en tienda OXXO.'}
+                </p>
+              </div>
+            )}
+
+            <div className="pago-resumen" style={{ marginTop: '1.25rem' }}>
+              <span>Total a pagar</span>
+              <strong>${subtotal.toLocaleString()}</strong>
+            </div>
+
+            <p className="pago-pregunta">¿Cuándo deseas realizar el pago?</p>
+            <div className="pago-acciones">
+              <button className="btn-pagar-ahora"
+                onClick={() => handleProcesarPago(true)}
+                disabled={guardandoPago || creandoPedido}>
+                ✦ Pagar ahora
+              </button>
+              <button className="btn-pagar-despues"
+                onClick={() => handleProcesarPago(false)}
+                disabled={guardandoPago || creandoPedido}>
+                Pagar más tarde
+              </button>
+            </div>
+            <p className="pago-nota">* Pago simulado — ningún cargo real será realizado.</p>
+          </>
+        )}
+
+        {/* ── PASO 4: procesando ── */}
+        {pasoModal === 'procesando' && (
+          <div className="pago-procesando">
+            <div className="pago-spinner" />
+            <h3 className="pago-modal-title">Procesando <em>pago</em></h3>
+            <p className="pago-subtitle">
+              Verificando con {METODOS_PAGO.find(m => m.id === metodoPago)?.label}…
+            </p>
+            <div className="pago-progress">
+              <div className="pago-progress-bar" />
+            </div>
+            <p className="pago-nota">Por favor no cierres esta ventana</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   if (pedidoExitoso) {
     return (
@@ -120,13 +489,11 @@ export default function Carrito() {
                     alt={producto?.nombre}
                     className="item-imagen"
                   />
-
                   <div className="item-info">
                     <h4 className="item-nombre">{producto?.nombre}</h4>
                     <p className="item-precio-unit">
                       ${item.precio_unitario?.toLocaleString()} c/u
                     </p>
-
                     {pers && (
                       <div className="item-personalizacion">
                         {pers.opciones?.rellenos?.length > 0 && (
@@ -144,36 +511,27 @@ export default function Carrito() {
                       </div>
                     )}
                   </div>
-
                   <div className="item-controles">
                     <div className="cantidad-controles">
                       <button
                         className="btn-cantidad"
                         onClick={() => actualizarCantidad(item._id, item.cantidad - 1)}
                         disabled={item.cantidad <= 1}
-                      >
-                        −
-                      </button>
+                      >−</button>
                       <span className="cantidad-valor">{item.cantidad}</span>
                       <button
                         className="btn-cantidad"
                         onClick={() => actualizarCantidad(item._id, item.cantidad + 1)}
-                      >
-                        +
-                      </button>
+                      >+</button>
                     </div>
-
                     <p className="item-subtotal">
                       ${(precioItem * item.cantidad).toLocaleString()}
                     </p>
-
                     <button
                       className="btn-eliminar"
                       onClick={() => eliminarItem(item._id)}
                       title="Eliminar producto"
-                    >
-                      🗑
-                    </button>
+                    >🗑</button>
                   </div>
                 </div>
               );
@@ -182,7 +540,6 @@ export default function Carrito() {
 
           <div className="carrito-resumen">
             <h3>Resumen del pedido</h3>
-
             <div className="resumen-linea">
               <span>Productos ({items.reduce((a, i) => a + i.cantidad, 0)})</span>
               <span>${subtotal.toLocaleString()}</span>
@@ -213,22 +570,16 @@ export default function Carrito() {
             )}
 
             <div className="resumen-acciones">
-              <button
-                className="btn-validar"
-                onClick={handleValidar}
-                disabled={validando}
-              >
+              <button className="btn-validar" onClick={handleValidar} disabled={validando}>
                 {validando ? 'Validando...' : 'Verificar disponibilidad'}
               </button>
-
               <button
                 className="btn-pedir"
-                onClick={handleCrearPedido}
+                onClick={handleAbrirPago}
                 disabled={creandoPedido || (validacion && !validacion.valido)}
               >
                 {creandoPedido ? 'Procesando...' : 'Realizar pedido'}
               </button>
-
               <button className="btn-vaciar" onClick={vaciarCarrito}>
                 Vaciar carrito
               </button>
@@ -236,6 +587,8 @@ export default function Carrito() {
           </div>
         </div>
       )}
+
+      {modalPago && <ModalPago />}
     </div>
   );
 }

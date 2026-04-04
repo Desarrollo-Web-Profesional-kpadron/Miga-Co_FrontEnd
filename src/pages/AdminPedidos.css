@@ -214,6 +214,15 @@
   letter-spacing: 0.06em;
 }
 
+/* estado badges wrapper */
+.estado-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
 /* estado badge — color comes from inline style */
 .estado {
   display: inline-flex;
@@ -227,6 +236,13 @@
   white-space: nowrap;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* badge secundario de pago */
+.estado-pago {
+  font-size: 0.58rem;
+  padding: 0.2rem 0.7rem;
+  opacity: 0.92;
 }
 
 /* ── CARD INFO ROW ── */
@@ -368,4 +384,193 @@
   .pedido-header { flex-direction: column; gap: 0.6rem; }
   .estado-select { width: 100%; }
   .pedido-actions { justify-content: stretch; }
+}
+
+/* ── DIRECCIÓN DE ENTREGA ── */
+.pedido-direccion {
+  padding: 0.9rem 1.1rem;
+  background: var(--cream);
+  border-radius: 0.75rem;
+  border-left: 3px solid var(--sage);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pedido-direccion-empty {
+  border-left-color: var(--mint);
+  opacity: 0.7;
+}
+
+.pedido-direccion-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+
+.pedido-dir-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pedido-dir-etiqueta {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--tea);
+  color: var(--forest);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 700;
+  align-self: flex-start;
+  margin-bottom: 0.2rem;
+}
+
+.pedido-dir-calle {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--forest);
+  line-height: 1.3;
+}
+
+.pedido-dir-ciudad {
+  font-size: 0.85rem;
+  color: var(--sage);
+}
+
+.pedido-dir-ref {
+  font-size: 0.78rem;
+  color: var(--mint);
+  font-style: italic;
+}
+
+.pedido-dir-na {
+  font-size: 0.82rem;
+  color: var(--sage);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* ── DIRECCIÓN DE ENTREGA ── */
+.pedido-direccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.2rem;
+  background: white;
+  border-radius: 0.85rem;
+  border: 1.5px solid var(--mint);
+  position: relative;
+  overflow: hidden;
+}
+
+/* línea decorativa izquierda */
+.pedido-direccion::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--forest), var(--sage));
+  border-radius: 3px 0 0 3px;
+}
+
+.pedido-direccion-empty {
+  border-style: dashed;
+  border-color: var(--mint);
+  opacity: 0.65;
+}
+
+.pedido-direccion-empty::before {
+  background: var(--mint);
+}
+
+/* head: ícono + label */
+.pedido-direccion-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--forest);
+  font-weight: 700;
+}
+
+/* body con la info real */
+.pedido-dir-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-left: 0.25rem;
+}
+
+.pedido-dir-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--forest);
+  background: var(--tea);
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  align-self: flex-start;
+  margin-bottom: 0.15rem;
+}
+
+.pedido-dir-calle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--forest);
+  line-height: 1.3;
+}
+
+.pedido-dir-ciudad {
+  font-size: 0.85rem;
+  color: var(--sage);
+  letter-spacing: 0.02em;
+}
+
+.pedido-dir-ref {
+  font-size: 0.78rem;
+  color: var(--mint);
+  font-style: italic;
+  margin-top: 0.1rem;
+}
+
+.pedido-dir-na {
+  font-size: 0.82rem;
+  color: var(--sage);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* estado badges wrapper */
+.estado-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+/* badge secundario de pago */
+.estado-pago {
+  font-size: 0.58rem;
+  padding: 0.2rem 0.7rem;
+  opacity: 0.92;
+}
+
+@media (max-width: 480px) {
+  .pedido-direccion { padding: 0.85rem 1rem; }
+  .pedido-dir-calle { font-size: 0.92rem; }
 }
