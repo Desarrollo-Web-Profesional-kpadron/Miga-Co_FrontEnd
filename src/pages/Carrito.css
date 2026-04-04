@@ -374,3 +374,704 @@
 
 .btn-ver-perfil:hover { background: #7a3e22; }
 .btn-seguir:hover { background: #fdf6f0; }
+
+/* ── AGREGAR AL FINAL DE Carrito.css ─────────────────────────────────────── */
+
+/* Overlay */
+.pago-overlay {
+  position: fixed; inset: 0;
+  background: rgba(40, 52, 30, 0.4);
+  backdrop-filter: blur(5px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+
+/* Modal */
+.pago-modal {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 2rem 1.8rem 1.8rem;
+  width: 100%; max-width: 440px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.14);
+  font-family: 'Cormorant Garamond', serif;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mint) transparent;
+}
+.pago-modal::-webkit-scrollbar { width: 4px; }
+.pago-modal::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 4px; }
+
+/* Head */
+.pago-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.pago-modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--forest);
+  margin: 0;
+}
+.pago-modal-title em { font-style: italic; color: var(--sage); }
+
+.pago-modal-close {
+  background: var(--cream); border: none;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--sage); font-size: 1rem;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.pago-modal-close:hover { background: var(--tea); }
+
+.pago-back-btn {
+  background: none; border: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--sage); cursor: pointer;
+  transition: color 0.2s; padding: 0;
+}
+.pago-back-btn:hover { color: var(--forest); }
+
+.pago-subtitle {
+  font-size: 0.85rem; color: var(--sage);
+  letter-spacing: 0.04em; margin-bottom: 1.1rem; opacity: 0.85;
+}
+
+/* ── Métodos ── */
+.pago-metodos { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.25rem; }
+
+.pago-metodo-item {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--mint); border-radius: 10px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.pago-metodo-item:hover { border-color: var(--sage); background: var(--cream); }
+.pago-metodo-item.selected { border-color: var(--forest); background: var(--cream); }
+.pago-metodo-item input[type="radio"] { display: none; }
+
+.pago-metodo-icon { font-size: 1.3rem; flex-shrink: 0; }
+.pago-metodo-label { flex: 1; font-size: 0.95rem; color: var(--forest); font-weight: 600; }
+.pago-check { font-size: 0.65rem; color: var(--forest); }
+
+/* ── Resumen ── */
+.pago-resumen {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.8rem 1rem;
+  background: var(--tea); border-radius: 8px;
+  margin-bottom: 1.1rem;
+  font-size: 0.88rem; color: var(--sage);
+}
+.pago-resumen strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 900; color: var(--forest);
+}
+
+/* ── Pregunta ── */
+.pago-pregunta {
+  font-size: 0.75rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--sage);
+  margin-bottom: 0.75rem; font-weight: 600;
+}
+
+/* ── Botones ── */
+.pago-acciones { display: flex; gap: 0.75rem; margin-bottom: 0.9rem; }
+
+.btn-pagar-ahora {
+  flex: 2; padding: 0.82rem;
+  background: var(--forest); color: var(--cream);
+  border: none; border-radius: 9px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 3px 12px rgba(114,129,86,0.28);
+}
+.btn-pagar-ahora:hover { background: var(--sage); }
+.btn-pagar-ahora:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-pagar-despues {
+  flex: 1; padding: 0.82rem;
+  background: var(--cream); color: var(--sage);
+  border: none; border-radius: 9px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-pagar-despues:hover { background: var(--tea); color: var(--forest); }
+.btn-pagar-despues:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.pago-nota {
+  font-size: 0.68rem; color: var(--mint);
+  text-align: center; font-style: italic;
+  letter-spacing: 0.05em;
+}
+
+/* ── Card preview ── */
+.card-preview {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--sage) 100%);
+  border-radius: 14px;
+  padding: 1.3rem 1.4rem;
+  margin-bottom: 1.3rem;
+  color: var(--cream);
+  position: relative;
+  min-height: 150px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(114,129,86,0.35);
+}
+
+.card-chip {
+  font-size: 1rem; opacity: 0.7;
+  letter-spacing: -0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.card-brand-label {
+  position: absolute;
+  top: 1.2rem; right: 1.3rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.card-numero-preview {
+  font-size: 1.1rem;
+  letter-spacing: 0.22em;
+  font-family: 'Courier New', monospace;
+  opacity: 0.95;
+  margin: 0.3rem 0 0.9rem;
+}
+
+.card-bottom-row {
+  display: flex; gap: 2rem;
+}
+
+.card-field-label {
+  font-size: 0.55rem; letter-spacing: 0.2em;
+  text-transform: uppercase; opacity: 0.65; margin-bottom: 0.15rem;
+}
+
+.card-field-val {
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.06em; opacity: 0.95;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+/* ── Card fields form ── */
+.card-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.1rem;
+}
+
+.card-field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+.card-field-group.full  { grid-column: 1 / -1; }
+.card-field-group.half  { grid-column: span 1; }
+
+.card-field-group label {
+  font-size: 0.68rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--forest); font-weight: 600;
+}
+
+.card-field-group input {
+  padding: 0.68rem 0.9rem;
+  border: 1.5px solid var(--mint); border-radius: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; color: var(--forest);
+  background: white; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card-field-group input::placeholder { color: var(--mint); }
+.card-field-group input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(136,151,108,0.12);
+}
+.card-field-group input.field-error { border-color: #b94040; }
+
+.field-err-msg {
+  font-size: 0.68rem; color: #b94040;
+  letter-spacing: 0.04em; font-style: italic;
+}
+
+/* ── PayPal / OXXO info ── */
+.pago-otro-info {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--cream);
+  border-radius: 1rem;
+  border: 1.5px dashed var(--mint);
+}
+
+.pago-otro-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+/* ── Procesando ── */
+.pago-procesando {
+  text-align: center;
+  padding: 2rem 1rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 1rem;
+}
+
+.pago-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--mint);
+  border-top-color: var(--forest);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pago-progress {
+  width: 100%; height: 4px;
+  background: var(--tea); border-radius: 4px;
+  overflow: hidden;
+}
+
+.pago-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--forest), var(--sage));
+  border-radius: 4px;
+  animation: progressAnim 2.2s ease-in-out forwards;
+}
+
+@keyframes progressAnim {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .pago-modal { padding: 1.5rem 1.2rem; }
+  .card-fields { grid-template-columns: 1fr; }
+  .card-field-group.half { grid-column: 1 / -1; }
+  .pago-acciones { flex-direction: column; }
+  .btn-pagar-ahora, .btn-pagar-despues { flex: unset; width: 100%; }
+}
+/* ── AGREGAR AL FINAL DE Carrito.css ─────────────────────────────────────── */
+
+/* Overlay */
+.pago-overlay {
+  position: fixed; inset: 0;
+  background: rgba(40, 52, 30, 0.4);
+  backdrop-filter: blur(5px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+
+/* Modal */
+.pago-modal {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 2rem 1.8rem 1.8rem;
+  width: 100%; max-width: 440px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.14);
+  font-family: 'Cormorant Garamond', serif;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mint) transparent;
+}
+.pago-modal::-webkit-scrollbar { width: 4px; }
+.pago-modal::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 4px; }
+
+/* Head */
+.pago-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.pago-modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--forest);
+  margin: 0;
+}
+.pago-modal-title em { font-style: italic; color: var(--sage); }
+
+.pago-modal-close {
+  background: var(--cream); border: none;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--sage); font-size: 1rem;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.pago-modal-close:hover { background: var(--tea); }
+
+.pago-back-btn {
+  background: none; border: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--sage); cursor: pointer;
+  transition: color 0.2s; padding: 0;
+}
+.pago-back-btn:hover { color: var(--forest); }
+
+.pago-subtitle {
+  font-size: 0.85rem; color: var(--sage);
+  letter-spacing: 0.04em; margin-bottom: 1.1rem; opacity: 0.85;
+}
+
+/* ── Métodos ── */
+.pago-metodos { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.25rem; }
+
+.pago-metodo-item {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--mint); border-radius: 10px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.pago-metodo-item:hover { border-color: var(--sage); background: var(--cream); }
+.pago-metodo-item.selected { border-color: var(--forest); background: var(--cream); }
+.pago-metodo-item input[type="radio"] { display: none; }
+
+.pago-metodo-icon { font-size: 1.3rem; flex-shrink: 0; }
+.pago-metodo-label { flex: 1; font-size: 0.95rem; color: var(--forest); font-weight: 600; }
+.pago-check { font-size: 0.65rem; color: var(--forest); }
+
+/* ── Resumen ── */
+.pago-resumen {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.8rem 1rem;
+  background: var(--tea); border-radius: 8px;
+  margin-bottom: 1.1rem;
+  font-size: 0.88rem; color: var(--sage);
+}
+.pago-resumen strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 900; color: var(--forest);
+}
+
+/* ── Pregunta ── */
+.pago-pregunta {
+  font-size: 0.75rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--sage);
+  margin-bottom: 0.75rem; font-weight: 600;
+}
+
+/* ── Botones ── */
+.pago-acciones { display: flex; gap: 0.75rem; margin-bottom: 0.9rem; }
+
+.btn-pagar-ahora {
+  flex: 2; padding: 0.82rem;
+  background: var(--forest); color: var(--cream);
+  border: none; border-radius: 9px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 3px 12px rgba(114,129,86,0.28);
+}
+.btn-pagar-ahora:hover { background: var(--sage); }
+.btn-pagar-ahora:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-pagar-despues {
+  flex: 1; padding: 0.82rem;
+  background: var(--cream); color: var(--sage);
+  border: none; border-radius: 9px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-pagar-despues:hover { background: var(--tea); color: var(--forest); }
+.btn-pagar-despues:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.pago-nota {
+  font-size: 0.68rem; color: var(--mint);
+  text-align: center; font-style: italic;
+  letter-spacing: 0.05em;
+}
+
+/* ── Card preview ── */
+.card-preview {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--sage) 100%);
+  border-radius: 14px;
+  padding: 1.3rem 1.4rem;
+  margin-bottom: 1.3rem;
+  color: var(--cream);
+  position: relative;
+  min-height: 150px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(114,129,86,0.35);
+}
+
+.card-chip {
+  font-size: 1rem; opacity: 0.7;
+  letter-spacing: -0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.card-brand-label {
+  position: absolute;
+  top: 1.2rem; right: 1.3rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.card-numero-preview {
+  font-size: 1.1rem;
+  letter-spacing: 0.22em;
+  font-family: 'Courier New', monospace;
+  opacity: 0.95;
+  margin: 0.3rem 0 0.9rem;
+}
+
+.card-bottom-row {
+  display: flex; gap: 2rem;
+}
+
+.card-field-label {
+  font-size: 0.55rem; letter-spacing: 0.2em;
+  text-transform: uppercase; opacity: 0.65; margin-bottom: 0.15rem;
+}
+
+.card-field-val {
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.06em; opacity: 0.95;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+/* ── Card fields form ── */
+.card-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.1rem;
+}
+
+.card-field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+.card-field-group.full  { grid-column: 1 / -1; }
+.card-field-group.half  { grid-column: span 1; }
+
+.card-field-group label {
+  font-size: 0.68rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--forest); font-weight: 600;
+}
+
+.card-field-group input {
+  padding: 0.68rem 0.9rem;
+  border: 1.5px solid var(--mint); border-radius: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; color: var(--forest);
+  background: white; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card-field-group input::placeholder { color: var(--mint); }
+.card-field-group input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(136,151,108,0.12);
+}
+.card-field-group input.field-error { border-color: #b94040; }
+
+.field-err-msg {
+  font-size: 0.68rem; color: #b94040;
+  letter-spacing: 0.04em; font-style: italic;
+}
+
+/* ── PayPal / OXXO info ── */
+.pago-otro-info {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--cream);
+  border-radius: 1rem;
+  border: 1.5px dashed var(--mint);
+}
+
+.pago-otro-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+/* ── Procesando ── */
+.pago-procesando {
+  text-align: center;
+  padding: 2rem 1rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 1rem;
+}
+
+.pago-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--mint);
+  border-top-color: var(--forest);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pago-progress {
+  width: 100%; height: 4px;
+  background: var(--tea); border-radius: 4px;
+  overflow: hidden;
+}
+
+.pago-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--forest), var(--sage));
+  border-radius: 4px;
+  animation: progressAnim 2.2s ease-in-out forwards;
+}
+
+@keyframes progressAnim {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .pago-modal { padding: 1.5rem 1.2rem; }
+  .card-fields { grid-template-columns: 1fr; }
+  .card-field-group.half { grid-column: 1 / -1; }
+  .pago-acciones { flex-direction: column; }
+  .btn-pagar-ahora, .btn-pagar-despues { flex: unset; width: 100%; }
+}
+
+/* ── Indicador de pasos ───────────────────────────────────────────────── */
+.pago-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.pago-step-row {
+  display: flex;
+  align-items: center;
+}
+
+.pago-step-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--mint);
+  background: white;
+  color: var(--mint);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700;
+  transition: all 0.2s;
+}
+
+.pago-step-dot.active {
+  border-color: var(--forest);
+  background: var(--forest);
+  color: var(--cream);
+}
+
+.pago-step-dot.done {
+  border-color: var(--sage);
+  background: var(--tea);
+  color: var(--forest);
+}
+
+.pago-step-line {
+  width: 36px; height: 2px;
+  background: var(--mint);
+  margin: 0 2px;
+}
+
+/* ── Dirección card ───────────────────────────────────────────────────── */
+.pago-dir-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.2rem;
+  background: var(--cream);
+  border: 1.5px solid var(--sage);
+  border-radius: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.pago-dir-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+.pago-dir-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--forest);
+  background: var(--tea);
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.45rem;
+  align-self: flex-start;
+}
+
+.pago-dir-principal {
+  color: var(--sage);
+  font-size: 0.6rem;
+}
+
+.pago-dir-calle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--forest); margin-bottom: 0.2rem;
+}
+
+.pago-dir-ciudad {
+  font-size: 0.88rem; color: var(--sage); line-height: 1.4;
+}
+
+.pago-dir-ref {
+  font-size: 0.78rem; color: var(--mint);
+  font-style: italic; margin-top: 0.2rem;
+}
+
+/* loading dirección */
+.pago-dir-loading {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1.2rem;
+  font-size: 0.9rem; color: var(--sage);
+  font-style: italic;
+}
+
+.pago-spinner-sm {
+  width: 20px; height: 20px;
+  border: 2px solid var(--mint);
+  border-top-color: var(--forest);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+/* empty dirección */
+.pago-dir-empty {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--cream);
+  border: 1.5px dashed var(--mint);
+  border-radius: 1rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.5rem;
+}
+
+.pago-dir-empty span { font-size: 2rem; opacity: 0.5; }
+.pago-dir-empty p { font-size: 0.9rem; color: var(--sage); }
+
+.pago-dir-link {
+  background: none; border: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--forest); cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0; margin-top: 0.25rem;
+}
